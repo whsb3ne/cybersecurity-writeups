@@ -87,15 +87,3 @@ The **Startup** machine hosts a public-facing web server alongside an improperly
 2. **Strict File Permissions on System Scripts:** Ensure any script invoked by a privileged `root` cron job (`planner.sh` and its child scripts like `/etc/print.sh`) is owned by `root:root` with `chmod 700` or `chmod 755` permissions.
 3. **Internal Network Encryption & Credential Hygiene:** Avoid reusing administrative passwords in interactive shells over unencrypted channels, and restrict read access to incident response artifacts (`suspicious.pcapng`) to authorized SOC personnel.
 
-## 5. LinkedIn Post Draft (4-Part Blueprint)
-
-> **Hook:** Just wrapped up the **Startup** room on TryHackMe (Easy / Linux) — a great practical study in how chained misconfigurations turn a low-risk file share into full root compromise.
->
-> **The Bottleneck:** Gaining the initial `www-data` foothold via anonymous FTP write access into the web root was straightforward, but pivoting to a standard user required digging into an `/incidents` directory and carving cleartext credentials out of a raw `suspicious.pcapng` network trace in Wireshark. From there, tracing a root-owned cron job (`planner.sh`) revealed a child script (`/etc/print.sh`) left writable by a non-root user.
->
-> **The Defensive Angle:**
-> • **Decouple Storage from Execution:** Never map anonymous FTP upload directories directly into a web server path where scripts (`.php`) can execute.
-> • **Audit Transitive Script Permissions:** Securing a root cron script isn't enough if it calls a secondary script (`chmod` drift) owned by a lower-privileged account.
-> • **Protect Incident Artifacts:** Packet captures often contain sensitive session data and credentials; storing `.pcapng` files on a world-readable filesystem creates an easy lateral movement path.
->
-> **CTA:** Full technical walkthrough, attack chain table, and remediation notes documented on GitHub: `https://github.com/<your-username>/cybersecurity-writeups/tree/main/tryhackme/startup`
